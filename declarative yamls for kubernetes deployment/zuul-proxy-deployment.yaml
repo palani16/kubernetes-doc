@@ -1,0 +1,31 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: zuul-proxy
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: zuul-proxy
+    spec:
+      containers:
+        - name: zuul-proxy
+          image: gcr.io/alien-airfoil-290817/zuul-proxy
+          ports:
+            - containerPort: 9114
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kube-zuul-proxy-service
+  labels:
+    name: kube-zuul-proxy-service
+spec:
+  ports:
+    - port: 8083
+      targetPort: 9114
+      protocol: TCP
+  selector:
+	app: zuul-proxy
+  type: LoadBalancer
